@@ -77,7 +77,8 @@ RUN sed -i 's/DirectoryIndex index.html/DirectoryIndex index.php index.html/' /e
 
 COPY . .
 
-RUN chown -R www-data:www-data /var/www/html
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 707 /var/www/html/data
 
 # Start both PHP-FPM and Apache
 COPY docker-entrypoint.sh /docker-entrypoint.sh
