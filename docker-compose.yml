@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: gnuboard_web
+    ports:
+      - "80:80"
+    volumes:
+      - ./data:/var/www/html/data
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  db:
+    image: mariadb:10.0
+    container_name: gnuboard_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: gnuboard
+      MYSQL_USER: gnuboard
+      MYSQL_PASSWORD: gnuboard123
+    volumes:
+      - db_data:/var/lib/mysql
+    command: >
+      --character-set-server=utf8
+      --collation-server=utf8_unicode_ci
+      --default-storage-engine=InnoDB
+    restart: unless-stopped
+
+volumes:
+  db_data:
