@@ -75,6 +75,13 @@ RUN mkdir -p /run/php \
     && sed -i 's|;listen.mode = 0660|listen.mode = 0660|' /usr/local/etc/php-fpm.d/www.conf
 
 WORKDIR /var/www/html
+
+# Remove Apache default page
+RUN rm -f /var/www/html/index.html
+
+# Set PHP as default index
+RUN sed -i 's/DirectoryIndex index.html/DirectoryIndex index.php index.html/' /etc/apache2/mods-enabled/dir.conf
+
 COPY . .
 
 RUN chown -R www-data:www-data /var/www/html
