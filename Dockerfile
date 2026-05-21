@@ -46,7 +46,7 @@ RUN echo 'AddDefaultCharset UTF-8' >> /etc/apache2/apache2.conf \
     && echo 'ServerName localhost' >> /etc/apache2/apache2.conf \
     && echo 'Protocols h2 h2c http/1.1' >> /etc/apache2/apache2.conf
 
-# Apache virtualhost config with PHP-FPM proxy
+# Apache virtualhost config with PHP-FPM via TCP
 RUN cat > /etc/apache2/sites-available/000-default.conf <<'EOF'
 <VirtualHost *:80>
     DocumentRoot /var/www/html
@@ -59,20 +59,13 @@ RUN cat > /etc/apache2/sites-available/000-default.conf <<'EOF'
     </Directory>
 
     <FilesMatch \.php$>
-        SetHandler "proxy:unix:/run/php/php7.4-fpm.sock|fcgi://localhost"
+        SetHandler "proxy:fcgi://127.0.0.1:9000"
     </FilesMatch>
 
     ErrorLog ${APACHE_LOG_DIR}/error.log
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 EOF
-
-# PHP-FPM socket path
-RUN mkdir -p /run/php \
-    && sed -i 's|listen = 127.0.0.1:9000|listen = /run/php/php7.4-fpm.sock|' /usr/local/etc/php-fpm.d/www.conf \
-    && sed -i 's|;listen.owner = www-data|listen.owner = www-data|' /usr/local/etc/php-fpm.d/www.conf \
-    && sed -i 's|;listen.group = www-data|listen.group = www-data|' /usr/local/etc/php-fpm.d/www.conf \
-    && sed -i 's|;listen.mode = 0660|listen.mode = 0660|' /usr/local/etc/php-fpm.d/www.conf
 
 WORKDIR /var/www/html
 
