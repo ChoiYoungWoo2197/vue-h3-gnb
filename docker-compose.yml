@@ -1,11 +1,13 @@
-version: '3.8'
-
 services:
   gnb_test:
     build: .
     container_name: gnb_test
     ports:
       - "8081:80"
+    environment:
+      - DB_NAME=gnb_test
+      - DB_USER=gnb_test
+      - DB_PASS=gnb_test
     volumes:
       - .:/var/www/html
       - ./data:/var/www/html/data
